@@ -2,5 +2,5 @@
 {%- set hxMap = (noteProps and noteProps.hexmap) or hexmap -%}
 {%- if hxMap and hxMap != "false" -%}
 <script type="application/json" id="hexcrawl-map-config">{{ pluginSettings | dump | replace("<", "\\u003c") | safe }}</script>
-<script src="/plugins/hexcrawl-map/assets/hexcrawl-map.js" defer></script>
+<script src="/plugins/hexcrawl-map/hexcrawl-map.js" defer></script>
 {%- endif -%}

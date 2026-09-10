@@ -1,19 +1,19 @@
 {
   "id": "hexcrawl-map",
   "name": "Hexcrawl Map",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Turns a map image into a pan/zoom hex map with fog of war. Explored hexes come from published notes (Hex 68, or hex: 68 in frontmatter); clicking one shows its notes in a side panel.",
   "author": "Jake Hill",
   "hooks": "index.js",
   "slots": {
-    "notes.header": "templates/backlink.njk",
-    "notes.footer": "templates/map.njk"
+    "notes.header": "backlink.njk",
+    "notes.footer": "map.njk"
   },
   "styles": [
-    "styles/hexcrawl-map.css"
+    "hexcrawl-map.css"
   ],
   "assets": [
-    "assets/"
+    "hexcrawl-map.js"
   ],
   "settings": [
     {

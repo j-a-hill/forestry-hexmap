@@ -1,6 +1,3 @@
-const fs = require("fs");
-const path = require("path");
-
 function escapeRegex(s) {
   return String(s).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
@@ -49,16 +46,6 @@ module.exports = {
   setupEleventy(eleventyConfig, context) {
     const prefix = (context.settings && context.settings.notePrefix) || "Hex";
 
-    // Used by the notes.header slot: which hexes is this note about?
-    eleventyConfig.addFilter("hexcrawlNumbers", function (fileSlug, noteProps, title) {
-      try {
-        if (noteProps && isTrue(noteProps.hexmap)) return [];
-        return hexesForNote(fileSlug, noteProps || {}, title, prefix);
-      } catch (e) {
-        return [];
-      }
-    });
-
     // Builds /hexcrawl-map.json from published notes only.
     eleventyConfig.addFilter("hexcrawlIndex", function (notes) {
       const index = { hexes: {}, reveal: [], maps: [] };
@@ -85,10 +72,7 @@ module.exports = {
       return JSON.stringify(index).replace(/</g, "\\u003c");
     });
 
-    const indexTemplate = fs.readFileSync(
-      path.join(context.pluginDir, "templates", "index-json.njk"),
-      "utf8"
-    );
+    const indexTemplate = "{{ collections.note | hexcrawlIndex | safe }}\n";
     eleventyConfig.addTemplate("hexcrawl-map-index.njk", indexTemplate, {
       permalink: "/hexcrawl-map.json",
       eleventyExcludeFromCollections: true,
