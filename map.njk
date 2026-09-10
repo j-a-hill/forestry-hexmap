@@ -1,0 +1,6 @@
+{#- Published notes carry user frontmatter under noteProps; raw/local notes have it top-level -#}
+{%- set hxMap = (noteProps and noteProps.hexmap) or hexmap -%}
+{%- if hxMap and hxMap != "false" -%}
+<script type="application/json" id="hexcrawl-map-config">{{ pluginSettings | dump | replace("<", "\\u003c") | safe }}</script>
+<script src="/plugins/hexcrawl-map/assets/hexcrawl-map.js" defer></script>
+{%- endif -%}

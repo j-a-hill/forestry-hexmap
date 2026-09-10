@@ -1,0 +1,136 @@
+{
+  "id": "hexcrawl-map",
+  "name": "Hexcrawl Map",
+  "version": "1.1.0",
+  "description": "Turns a map image into a pan/zoom hex map with fog of war. Explored hexes come from published notes (Hex 68, or hex: 68 in frontmatter); clicking one shows its notes in a side panel.",
+  "author": "Jake Hill",
+  "hooks": "index.js",
+  "slots": {
+    "notes.header": "templates/backlink.njk",
+    "notes.footer": "templates/map.njk"
+  },
+  "styles": [
+    "styles/hexcrawl-map.css"
+  ],
+  "assets": [
+    "assets/"
+  ],
+  "settings": [
+    {
+      "key": "notePrefix",
+      "name": "Hex note prefix",
+      "description": "Published notes named '<prefix> <number>' reveal that hex, e.g. 'Hex 68'.",
+      "type": "text",
+      "default": "Hex"
+    },
+    {
+      "key": "revealNeighbours",
+      "name": "Thin fog next to explored hexes",
+      "description": "Hexes bordering an explored hex are shown through lighter fog.",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "key": "showNumbers",
+      "name": "Hex numbers",
+      "description": "Which hexes get their number drawn on the map.",
+      "type": "select",
+      "options": [
+        "explored",
+        "all",
+        "none"
+      ],
+      "default": "explored"
+    },
+    {
+      "key": "clickShows",
+      "name": "Clicking an explored hex",
+      "description": "panel = show its notes in a side panel on the map; links = small popup with links to the notes.",
+      "type": "select",
+      "options": [
+        "panel",
+        "links"
+      ],
+      "default": "panel"
+    },
+    {
+      "key": "fogColour",
+      "name": "Fog colour",
+      "description": "Any CSS colour.",
+      "type": "text",
+      "default": "#1c1914"
+    },
+    {
+      "key": "fogOpacity",
+      "name": "Fog opacity",
+      "description": "0 to 1. Lower lets players make out terrain under the fog.",
+      "type": "number",
+      "default": 0.97
+    },
+    {
+      "key": "fogCoverage",
+      "name": "Fog coverage",
+      "description": "map = the whole map area up to the frame (circle of 'Fog radius', or the whole image for rectangular grids); grid = hexes only; image = everything.",
+      "type": "select",
+      "options": [
+        "map",
+        "grid",
+        "image"
+      ],
+      "default": "map"
+    },
+    {
+      "key": "fogRadius",
+      "name": "Fog radius",
+      "description": "Radius of the fogged map area as a fraction of image width, used when coverage is map and the grid is circular.",
+      "type": "number",
+      "default": 0.468
+    },
+    {
+      "key": "mapHeight",
+      "name": "Map height",
+      "description": "CSS height of the map viewer on the page.",
+      "type": "text",
+      "default": "80vh"
+    },
+    {
+      "key": "gridOrientation",
+      "name": "Grid orientation",
+      "description": "flat = flat-topped hexes (columns), pointy = pointy-topped (rows).",
+      "type": "select",
+      "options": [
+        "flat",
+        "pointy"
+      ],
+      "default": "flat"
+    },
+    {
+      "key": "gridSize",
+      "name": "Hex radius",
+      "description": "Centre-to-corner hex radius as a fraction of image width.",
+      "type": "number",
+      "default": 0.025
+    },
+    {
+      "key": "gridOriginX",
+      "name": "Grid origin X",
+      "description": "X of one hex centre, as a fraction of image width.",
+      "type": "number",
+      "default": 0.07475
+    },
+    {
+      "key": "gridOriginY",
+      "name": "Grid origin Y",
+      "description": "Y of the same hex centre, as a fraction of image width.",
+      "type": "number",
+      "default": 2.25e-05
+    },
+    {
+      "key": "gridClipRadius",
+      "name": "Circular grid radius",
+      "description": "Only hexes whose centre is within this radius (fraction of image width) of the image centre exist. 0 = whole image.",
+      "type": "number",
+      "default": 0.4497
+    }
+  ]
+}

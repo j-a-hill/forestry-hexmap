@@ -1,0 +1,24 @@
+{%- set hxNums = page.fileSlug | hexcrawlNumbers(noteProps, title) -%}
+{%- if hxNums and hxNums.length -%}
+<div class="hexcrawl-backlinks" hidden>
+  {%- for n in hxNums %}
+  <a class="hexcrawl-backlink" data-hexcrawl-hex="{{ n }}" href="#">Hex {{ n }} on the map</a>
+  {%- endfor %}
+</div>
+<script>
+  (function () {
+    var box = document.currentScript.previousElementSibling;
+    fetch("/hexcrawl-map.json")
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (index) {
+        if (!index || !index.maps || !index.maps.length) return;
+        var base = index.maps[0].url;
+        box.querySelectorAll("[data-hexcrawl-hex]").forEach(function (a) {
+          a.href = base + "?hex=" + a.getAttribute("data-hexcrawl-hex");
+        });
+        box.hidden = false;
+      })
+      .catch(function () {});
+  })();
+</script>
+{%- endif -%}
