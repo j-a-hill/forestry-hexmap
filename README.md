@@ -7,10 +7,10 @@ A Digital Garden plugin that turns a map image on one note into a pan/zoom hex m
 ## What it does
 
 - Drag to pan, scroll/pinch/double-click to zoom, +/−/reset/expand buttons, arrow keys.
-- The whole map area is under fog, out to the frame, except explored hexes. Hexes next to an explored one get thinner fog.
+- The whole map area is under fog, out to the frame, except explored hexes. Hexes next to an explored one get slightly thinner fog.
 - Click an explored hex: a side panel opens on the map with the full text of every published note about it. Links to other hex notes in the panel move the map to that hex. On phones the panel sits under the map (or as a bottom sheet when expanded).
-- Click any other hex: small tooltip with its number and "Unexplored".
-- `?hex=68` on the map URL zooms to that hex.
+- Explored hexes with no notes show a small "Hex N · Explored" tooltip. Hexes under fog can't be selected and show nothing.
+- `?hex=68` on the map URL zooms to that hex (if it's explored).
 - Notes about a hex get a "Hex 68 on the map" link under the title.
 - Counter of explored hexes.
 
@@ -40,7 +40,8 @@ Unpublishing the note puts the fog back.
 | Setting | Default | Notes |
 |---|---|---|
 | Hex note prefix | `Hex` | `Hex 68`, `hex-68`, `Hex_068` all match |
-| Thin fog next to explored hexes | on | |
+| Lighter fog next to explored hexes | on | |
+| Fog strength next to explored hexes | `0.9` | 1 = full fog, 0 = clear |
 | Hex numbers | `explored` | `explored`, `all`, `none` |
 | Clicking an explored hex | `panel` | `panel` shows note text on the map; `links` = popup with links |
 | Fog colour / opacity | `#1c1914` / `0.97` | |

@@ -1,7 +1,7 @@
 {
   "id": "hexcrawl-map",
   "name": "Hexcrawl Map",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Turns a map image into a pan/zoom hex map with fog of war. Explored hexes come from published notes (Hex 68, or hex: 68 in frontmatter); clicking one shows its notes in a side panel.",
   "author": "Jake Hill",
   "hooks": "index.js",
@@ -25,10 +25,17 @@
     },
     {
       "key": "revealNeighbours",
-      "name": "Thin fog next to explored hexes",
+      "name": "Lighter fog next to explored hexes",
       "description": "Hexes bordering an explored hex are shown through lighter fog.",
       "type": "boolean",
       "default": true
+    },
+    {
+      "key": "neighbourFog",
+      "name": "Fog strength next to explored hexes",
+      "description": "0 to 1. How much fog stays on hexes bordering an explored one (1 = full fog, 0 = clear).",
+      "type": "number",
+      "default": 0.9
     },
     {
       "key": "showNumbers",

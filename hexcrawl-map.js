@@ -15,6 +15,7 @@
       showNumbers: cfg.showNumbers || "explored",
       fogColour: cfg.fogColour || "#1c1914",
       fogOpacity: Math.min(1, Math.max(0, num(cfg.fogOpacity, 0.97))),
+      neighbourFog: Math.min(1, Math.max(0, num(cfg.neighbourFog, 0.9))),
       fogCoverage: ["map", "grid", "image"].indexOf(cfg.fogCoverage) >= 0 ? cfg.fogCoverage : "map",
       fogRadius: num(cfg.fogRadius, 0.468),
       panel: cfg.clickShows !== "links",
@@ -154,8 +155,8 @@
     // 3. clear explored hexes, thin the fog on their neighbours
     ctx.globalCompositeOperation = "destination-out";
     var seen = hexes.filter(function (h) { return state[h.n] === "seen"; });
-    if (seen.length) {
-      ctx.globalAlpha = 0.5;
+    if (seen.length && cfg.neighbourFog < 1) {
+      ctx.globalAlpha = 1 - cfg.neighbourFog;
       pathFor(seen, 1.01);
       ctx.fill();
       ctx.globalAlpha = 1;
@@ -233,7 +234,7 @@
     var polys = {};
     hexes.forEach(function (h) {
       var pts = corners(h, cfg.size, flat).map(function (p) { return p[0].toFixed(5) + "," + p[1].toFixed(5); }).join(" ");
-      var cls = "hexcrawl-hex is-" + (state[h.n] || "fogged");
+      var cls = "hexcrawl-hex is-" + (state[h.n] === "explored" ? "explored" : "fogged");
       polys[h.n] = el("svg:polygon", { points: pts, class: cls, "data-hex": h.n }, svg);
     });
     var labels = el("svg:g", { class: "hexcrawl-labels", "aria-hidden": "true" }, svg);
@@ -532,6 +533,7 @@
     panelClose.addEventListener("click", closeAll);
 
     function goTo(h) {
+      if (!h || state[h.n] !== "explored") return;
       if (view.s < 2) centreOn(h, 3);
       if (cfg.panel && (notes[h.n] || []).length) openPanel(h);
       else openPopup(h, { x: view.tx + h.x * base.w * view.s, y: view.ty + h.y * base.w * view.s });
@@ -542,7 +544,8 @@
 
     function handleTap(e, p) {
       var h = hexAt(p);
-      if (!h) { closeAll(); return; }
+      // only explored hexes can be selected; fog gives nothing away
+      if (!h || state[h.n] !== "explored") { closeAll(); return; }
       if (cfg.panel && (notes[h.n] || []).length) openPanel(h);
       else openPopup(h, p);
     }
@@ -554,7 +557,7 @@
 
     var params = new URLSearchParams(location.search);
     var target = byNum[parseInt(params.get("hex"), 10)];
-    if (target) {
+    if (target && state[target.n] === "explored") {
       centreOn(target, 3);
       goTo(target);
       root.scrollIntoView({ block: "center" });

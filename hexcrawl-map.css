@@ -58,8 +58,8 @@
 }
 @media (hover: hover) {
   .hexcrawl-viewport:not(.is-dragging) .hexcrawl-grid { pointer-events: auto; }
-  .hexcrawl-hex { pointer-events: all; }
-  .hexcrawl-hex:hover { stroke: rgba(255, 244, 214, 0.55); }
+  .hexcrawl-hex.is-explored { pointer-events: all; cursor: pointer; }
+  .hexcrawl-hex.is-explored:hover { stroke: rgba(255, 244, 214, 0.55); }
 }
 
 .hexcrawl-labels text {
