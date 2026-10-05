@@ -46,11 +46,16 @@ function lower(v) {
   return typeof v === "string" || typeof v === "number" ? String(v).trim().toLowerCase() : "";
 }
 
-// "[[Places/Ledge Camp|Camp]]" -> "Ledge Camp"; anything else as typed.
+// "[[Places/Ledge Camp|Camp]]" -> "Ledge Camp"; a plain name as typed.
+// Something that starts like a wikilink but isn't one ("[[Ledge Camp",
+// "[[Ledge Camp]] east") is no place at all, rather than a guess.
 function placeName(value) {
   const raw = typeof value === "string" ? value.trim() : "";
-  const link = raw.match(/^!?\[\[([^\]|#]+)/);
-  return link ? link[1].trim().split("/").pop() : raw;
+  if (!raw.startsWith("[[") && !raw.startsWith("![[")) return raw;
+  const link = raw.match(/^!?\[\[([^\[\]]+)\]\]$/);
+  if (!link) return "";
+  const target = link[1].split("|")[0].split("#")[0].trim();
+  return target ? target.split("/").pop().trim() : "";
 }
 
 // A character's location as a hex number: 57, "57" or "Hex 57" is that hex;

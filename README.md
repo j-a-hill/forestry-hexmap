@@ -42,7 +42,7 @@ location: 57          # a hex number (or "Hex 57")
 location: Ledge Camp  # or the title of a published note that has hex: set
 ```
 
-Clicking that hex shows "Here: Osric, Tara" at the top of the side panel, or in the small popup. There are no markers on the map. Only explored hexes list anyone: a character whose location is still under fog doesn't appear anywhere, and a location never reveals a hex. A place name with no published note, or a note with no `hex:`, puts the character nowhere on the map.
+Clicking that hex shows "Here: Osric, Tara" at the top of the side panel, or in the small popup. There are no markers on the map. Only explored hexes list anyone: a character whose location is still under fog doesn't appear anywhere, and a location never reveals a hex. A place name puts the character on the hex of the published note with that title or file name, where the note is tied to a hex the usual way: a `hex:` property, or a name like `Hex 57`. A place with no published note, or a note tied to no hex, puts the character nowhere on the map.
 
 The site's `/hexcrawl-map.json` carries the same thing as `characters`, e.g. `{ "57": ["Osric", "Tara"] }`, explored hexes only.
 
