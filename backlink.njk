@@ -7,7 +7,7 @@
   (function () {
     var box = document.currentScript.previousElementSibling;
     var here = decodeURI(location.pathname).replace(/\/?$/, "/");
-    fetch("/hexcrawl-map.json")
+    fetch("/hexcrawl-map.json{% if meta and meta.buildDate %}?v={{ meta.buildDate | isoDate }}{% endif %}")
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (index) {
         if (!index || !index.maps || !index.maps.length) return;

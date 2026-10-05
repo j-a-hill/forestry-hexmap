@@ -5,6 +5,14 @@
   var SVG_NS = "http://www.w3.org/2000/svg";
   var MAX_SCALE = 8;
 
+  // The build stamps the page with its date; asking for the index with it
+  // means a cached copy from an earlier publish is never used.
+  function indexUrl() {
+    var el = document.getElementById("hexcrawl-map-config");
+    var version = el && el.getAttribute("data-version");
+    return "/hexcrawl-map.json" + (version ? "?v=" + encodeURIComponent(version) : "");
+  }
+
   function readConfig() {
     var el = document.getElementById("hexcrawl-map-config");
     var cfg = {};
@@ -185,7 +193,7 @@
 
     Promise.all([
       loadImage(src),
-      fetch("/hexcrawl-map.json").then(function (r) { return r.ok ? r.json() : {}; }).catch(function () { return {}; })
+      fetch(indexUrl()).then(function (r) { return r.ok ? r.json() : {}; }).catch(function () { return {}; })
     ]).then(function (res) {
       build(cfg, anchor, res[0], res[1] || {});
     }).catch(function (e) {
