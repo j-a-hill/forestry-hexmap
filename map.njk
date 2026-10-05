@@ -1,6 +1,9 @@
 {#- Published notes carry user frontmatter under noteProps; raw/local notes have it top-level -#}
 {%- set hxMap = (noteProps and noteProps.hexmap) or hexmap -%}
 {%- if hxMap and hxMap != "false" -%}
-<script type="application/json" id="hexcrawl-map-config">{{ pluginSettings | dump | replace("<", "\\u003c") | safe }}</script>
-<script src="/plugins/hexcrawl-map/hexcrawl-map.js" defer></script>
+{#- Stamp the viewer and its data with the build time, as the garden does for its own files, so a
+    browser or CDN holding an older copy fetches the new one after each publish. -#}
+{%- set hxVersion = (meta.buildDate | isoDate) if (meta and meta.buildDate) else "" -%}
+<script type="application/json" id="hexcrawl-map-config" data-version="{{ hxVersion }}">{{ pluginSettings | dump | replace("<", "\\u003c") | safe }}</script>
+<script src="/plugins/hexcrawl-map/hexcrawl-map.js{% if hxVersion %}?v={{ hxVersion }}{% endif %}" defer></script>
 {%- endif -%}
