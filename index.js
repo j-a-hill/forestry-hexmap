@@ -62,7 +62,20 @@ function placeName(value) {
 // a place name is the hex of the published note with that title; anything
 // else is no hex. Never reveals anything: the caller only keeps hexes that
 // are already explored.
-function locationHex(value, places, prefix) {
+// YAML reads an unquoted `location: [[Fellgard]]` as [["Fellgard"]], and the
+// publisher passes it through as is: turn it back into the wikilink. A
+// one-item list is that item; anything longer is no single place.
+function unwrapLocation(value) {
+  if (!Array.isArray(value) || value.length !== 1) return value;
+  const only = value[0];
+  if (Array.isArray(only) && only.length === 1 && typeof only[0] === "string") {
+    return "[[" + only[0] + "]]";
+  }
+  return typeof only === "string" || typeof only === "number" ? only : value;
+}
+
+function locationHex(property, places, prefix) {
+  const value = unwrapLocation(property);
   if (typeof value === "number") return Number.isInteger(value) && value > 0 ? value : null;
   const name = placeName(value);
   if (!name) return null;
