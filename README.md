@@ -9,7 +9,7 @@ A Digital Garden plugin that turns a map image on one note into a pan/zoom hex m
 - Drag to pan, scroll/pinch/double-click to zoom, +/−/reset/expand buttons, arrow keys.
 - The whole map area is under fog, out to the frame, except explored hexes. Hexes next to an explored one get slightly thinner fog.
 - Click an explored hex: a side panel opens on the map with the full text of every published note about it. Links to other hex notes in the panel move the map to that hex. On phones the panel sits under the map (or as a bottom sheet when expanded).
-- Explored hexes with no notes show a small "Hex N · Explored" tooltip. Hexes under fog can't be selected and show nothing.
+- Explored hexes with no notes show a small "Hex N · Explored" tooltip. Characters whose `location` is that hex are listed as "Here: …" in the tooltip and at the top of the panel. Hexes under fog can't be selected and show nothing.
 - `?hex=68` on the map URL zooms to that hex (if it's explored).
 - Notes about a hex get a "Hex 68 on the map" link under the title.
 - Counter of explored hexes.
@@ -34,6 +34,17 @@ hexmap-reveal: 57, 58   # optional: explored hexes that have no note
 - Add the number to `hexmap-reveal` on the map note.
 
 Unpublishing the note puts the fog back.
+
+**Where the characters are** – give a character note (`type: character`) a `location:`:
+
+```yaml
+location: 57          # a hex number (or "Hex 57")
+location: Ledge Camp  # or the title of a published note that has hex: set
+```
+
+Clicking that hex shows "Here: Osric, Tara" at the top of the side panel, or in the small popup. There are no markers on the map. Only explored hexes list anyone: a character whose location is still under fog doesn't appear anywhere, and a location never reveals a hex. A place name with no published note, or a note with no `hex:`, puts the character nowhere on the map.
+
+The site's `/hexcrawl-map.json` carries the same thing as `characters`, e.g. `{ "57": ["Osric", "Tara"] }`, explored hexes only.
 
 ## Settings
 

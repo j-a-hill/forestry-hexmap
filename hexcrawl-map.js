@@ -432,11 +432,20 @@
         ? "Hex notes" : note.title;
     }
 
+    // "Here: Osric, Tara" — characters whose location is this hex. The index
+    // only lists explored hexes; the state check keeps it that way regardless.
+    var characters = index.characters || {};
+    function hereLine(h, cls, parent) {
+      var names = state[h.n] === "explored" && Array.isArray(characters[h.n]) ? characters[h.n] : [];
+      if (names.length) el("div", { class: cls, text: "Here: " + names.join(", ") }, parent);
+    }
+
     function openPopup(h, p) {
       closePanel();
       select(h);
       popup.textContent = "";
       el("div", { class: "hexcrawl-popup-title", text: "Hex " + h.n }, popup);
+      hereLine(h, "hexcrawl-popup-here", popup);
       var list = notes[h.n] || [];
       if (list.length) {
         var ul = el("ul", {}, popup);
@@ -480,6 +489,7 @@
       panelTitle.textContent = "Hex " + h.n;
       panelBody.textContent = "";
       panelBody.scrollTop = 0;
+      hereLine(h, "hexcrawl-panel-here", panelBody);
       list.forEach(function (note) {
         var section = el("section", { class: "hexcrawl-note" }, panelBody);
         var head = el("div", { class: "hexcrawl-note-head" }, section);
