@@ -42,19 +42,52 @@ function hexesForNote(fileSlug, noteProps, title, prefix) {
   return [...new Set(found)];
 }
 
+function lower(v) {
+  return typeof v === "string" || typeof v === "number" ? String(v).trim().toLowerCase() : "";
+}
+
+// "[[Places/Ledge Camp|Camp]]" -> "Ledge Camp"; anything else as typed.
+function placeName(value) {
+  const raw = typeof value === "string" ? value.trim() : "";
+  const link = raw.match(/^!?\[\[([^\]|#]+)/);
+  return link ? link[1].trim().split("/").pop() : raw;
+}
+
+// A character's location as a hex number: 57, "57" or "Hex 57" is that hex;
+// a place name is the hex of the published note with that title; anything
+// else is no hex. Never reveals anything: the caller only keeps hexes that
+// are already explored.
+function locationHex(value, places, prefix) {
+  if (typeof value === "number") return Number.isInteger(value) && value > 0 ? value : null;
+  const name = placeName(value);
+  if (!name) return null;
+  const m = name.match(/^\d+$/) ? [name, name] : name.match(makeNameRegex(prefix));
+  if (m) {
+    const n = parseInt(m[1], 10);
+    return n > 0 ? n : null;
+  }
+  const hexes = places.get(name.toLowerCase());
+  return hexes && hexes.length ? hexes[0] : null;
+}
+
 module.exports = {
   setupEleventy(eleventyConfig, context) {
     const prefix = (context.settings && context.settings.notePrefix) || "Hex";
 
     // Builds /hexcrawl-map.json from published notes only.
     eleventyConfig.addFilter("hexcrawlIndex", function (notes) {
-      const index = { hexes: {}, reveal: [], maps: [] };
+      const index = { hexes: {}, reveal: [], maps: [], characters: {} };
+      const places = new Map(); // lower-cased note title or file name -> its hexes
+      const people = []; // characters with a location, resolved once every note is read
       for (const item of notes || []) {
         try {
           const data = item.data || {};
           if (data.hide) continue;
           const p = props(data);
           const title = p.title || data.title || item.fileSlug;
+          if (lower(p.type) === "character" && p.location !== undefined && p.location !== null) {
+            people.push({ name: String(title), location: p.location });
+          }
           if (isTrue(p.hexmap)) {
             index.maps.push({ title: String(title), url: item.url });
             for (const n of parseHexList(p["hexmap-reveal"])) {
@@ -62,12 +95,33 @@ module.exports = {
             }
             continue;
           }
-          for (const n of hexesForNote(item.fileSlug, p, title, prefix)) {
+          const noteHexes = hexesForNote(item.fileSlug, p, title, prefix);
+          for (const n of noteHexes) {
             (index.hexes[n] = index.hexes[n] || []).push({ title: String(title), url: item.url });
+          }
+          if (noteHexes.length) {
+            for (const key of [lower(title), lower(item.fileSlug)]) {
+              if (key && !places.has(key)) places.set(key, noteHexes);
+            }
           }
         } catch (e) {
           // one odd note must not break the index
         }
+      }
+
+      // Who is where, on explored hexes only: a location never lifts the fog.
+      const explored = new Set(Object.keys(index.hexes).map(Number).concat(index.reveal));
+      for (const person of people) {
+        try {
+          const n = locationHex(person.location, places, prefix);
+          if (n === null || !explored.has(n)) continue;
+          (index.characters[n] = index.characters[n] || []).push(person.name);
+        } catch (e) {
+          // leave this character off the map
+        }
+      }
+      for (const n of Object.keys(index.characters)) {
+        index.characters[n].sort((a, b) => a.localeCompare(b));
       }
       return JSON.stringify(index).replace(/</g, "\\u003c");
     });
